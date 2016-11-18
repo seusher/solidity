@@ -737,7 +737,8 @@ ASTPointer<FunctionTypeName> Parser::parseFunctionType()
 		header.parameters,
 		header.returnParameters,
 		header.visibility,
-		header.isDeclaredConst,
+		header.isView,
+		header.isPure,
 		header.isPayable
 	);
 }
