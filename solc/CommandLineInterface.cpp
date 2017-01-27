@@ -131,6 +131,8 @@ static string const g_argOptimize = g_strOptimize;
 static string const g_argOptimizeRuns = g_strOptimizeRuns;
 static string const g_argOutputDir = g_strOutputDir;
 static string const g_argSignatureHashes = g_strSignatureHashes;
+static string const g_argSnippet = "snippet";
+static string const g_argSnippetContext = "snippet-context";
 static string const g_argVersion = g_strVersion;
 static string const g_stdinFileName = g_stdinFileNameStr;
 static string const g_argMetadataLiteral = g_strMetadataLiteral;
@@ -314,7 +316,6 @@ void CommandLineInterface::handleMeta(DocumentationType _type, string const& _co
 			cout << title << endl;
 			cout << output << endl;
 		}
-
 	}
 }
 
@@ -548,7 +549,19 @@ Allowed options)",
 			g_argAllowPaths.c_str(),
 			po::value<string>()->value_name("path(s)"),
 			"Allow a given path for imports. A list of paths can be supplied by separating them with a comma."
-		);
+		)
+		(
+			g_argSnippet.c_str(),
+			po::value<string>(),
+			"Pass a snippet (function or expression) to be compiled in the context given by "
+			"--snippet-context."
+		)
+		(
+			g_argSnippetContext.c_str(),
+			po::value<string>(),
+			"Contract the snippet is assumed to be placed in."
+		)
+		(g_argMetadataLiteral.c_str(), "Store referenced sources are literal data in the metadata output.");
 	po::options_description outputComponents("Output Components");
 	outputComponents.add_options()
 		(g_argAst.c_str(), "AST of all source files.")
@@ -717,6 +730,15 @@ bool CommandLineInterface::processInput()
 		if (successful && m_args.count(g_argFormal))
 			if (!m_compiler->prepareFormalAnalysis())
 				successful = false;
+
+		if (successful && m_args.count(g_argSnippet))
+		{
+			string context;
+			if (m_args.count(g_argSnippetContext))
+				context = m_args[g_argSnippetContext].as<string>();
+			if (!m_compiler->compileSnippet("<snippet>", m_args[g_argSnippet].as<string>(), context))
+				successful = false;
+		}
 
 		for (auto const& error: m_compiler->errors())
 			SourceReferenceFormatter::printExceptionInformation(
