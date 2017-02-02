@@ -100,7 +100,7 @@ parseAnalyseAndReturnError(string const& _source, bool _reportWarnings = false, 
 			if (!PostTypeChecker(errors).check(*sourceUnit))
 				success = false;
 		if (success)
-			if (!StaticAnalyzer(errors).analyze(*sourceUnit))
+			if (!StaticAnalyzer(globalContext->declarations(), errors).analyze(*sourceUnit))
 				success = false;
 		if (errors.size() > 1 && !_allowMultipleErrors)
 			BOOST_FAIL("Multiple errors found");
@@ -5718,8 +5718,27 @@ BOOST_AUTO_TEST_CASE(no_unused_dec_after_use)
 	CHECK_SUCCESS_NO_WARNINGS(text);
 }
 
+BOOST_AUTO_TEST_CASE(shadowing_global_functions)
+{
+	char const* text = R"(
+		contract C {
+			function keccak256() {}
+		}
+	)";
+	CHECK_WARNING(text, "Shadowing global function");
+}
 
-
+BOOST_AUTO_TEST_CASE(shadowing_global_variables)
+{
+	char const* text = R"(
+		contract C {
+			function f() {
+				uint msg;
+			}
+		}
+	)";
+	CHECK_WARNING(text, "Shadowing global variable");
+}
 
 BOOST_AUTO_TEST_SUITE_END()
 
