@@ -244,7 +244,7 @@ bool CompilerStack::analyze()
 
 	if (noErrors)
 	{
-		StaticAnalyzer staticAnalyzer(m_errors);
+		StaticAnalyzer staticAnalyzer(m_globalContext->declarations(), m_errors);
 		for (Source const* source: m_sourceOrder)
 			if (!staticAnalyzer.analyze(*source->ast))
 				noErrors = false;
