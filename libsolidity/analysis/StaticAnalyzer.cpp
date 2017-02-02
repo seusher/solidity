@@ -58,7 +58,7 @@ bool StaticAnalyzer::visit(FunctionDefinition const& _function)
 
 	for (Declaration const* declaration: m_globals)
 		if (declaration->name() == _function.name())
-			warning(_function.location(), "Shadowing global function \"" + _function.name() + "\".");
+			warning(_function.location(), "Shadowing builtin symbol \"" + _function.name() + "\".");
 
 	return true;
 }
@@ -129,7 +129,7 @@ bool StaticAnalyzer::visit(VariableDeclaration const& _variable)
 {
 	for (Declaration const* declaration: m_globals)
 		if (declaration->name() == _variable.name())
-			warning(_variable.location(), "Shadowing global variable \"" + _variable.name() + "\".");
+			warning(_variable.location(), "Shadowing builtin symbol \"" + _variable.name() + "\".");
 
 	return true;
 }
