@@ -56,9 +56,7 @@ bool StaticAnalyzer::visit(FunctionDefinition const& _function)
 	solAssert(m_localVarUseCount.empty(), "");
 	m_nonPayablePublic = _function.isPublic() && !_function.isPayable();
 
-	for (string const name: m_globals)
-		if (name == _function.name())
-			warning(_function.location(), "Shadowing builtin symbol \"" + _function.name() + "\".");
+	checkShadowingBuiltin(_function);
 
 	return true;
 }
@@ -127,29 +125,27 @@ bool StaticAnalyzer::visit(MemberAccess const& _memberAccess)
 
 bool StaticAnalyzer::visit(VariableDeclaration const& _variable)
 {
-	for (string const name: m_globals)
-		if (name == _variable.name())
-			warning(_variable.location(), "Shadowing builtin symbol \"" + _variable.name() + "\".");
-
+	checkShadowingBuiltin(_variable);
 	return true;
 }
 
 bool StaticAnalyzer::visit(EventDefinition const& _event)
 {
-	for (string const name: m_globals)
-		if (name == _event.name())
-			warning(_event.location(), "Shadowing builtin symbol \"" + _event.name() + "\".");
-
+	checkShadowingBuiltin(_event);
 	return true;
 }
 
 bool StaticAnalyzer::visit(ImportDirective const& _import)
 {
-	for (string const name: m_globals)
-		if (name == _import.name())
-			warning(_import.location(), "Shadowing builtin symbol \"" + _import.name() + "\".");
-
+	checkShadowingBuiltin(_import);
 	return true;
+}
+
+void StaticAnalyzer::checkShadowingBuiltin(Declaration const& _declaration)
+{
+	for (string const name: m_globals)
+		if (name == _declaration.name())
+			warning(_declaration.location(), "Shadowing builtin symbol \"" + _declaration.name() + "\".");
 }
 
 void StaticAnalyzer::warning(SourceLocation const& _location, string const& _description)
