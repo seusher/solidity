@@ -73,6 +73,8 @@ private:
 	virtual bool visit(VariableDeclaration const& _variable) override;
 	virtual bool visit(Identifier const& _identifier) override;
 	virtual bool visit(Return const& _return) override;
+	virtual bool visit(StructDefinition const& _struct) override;
+	virtual void endVisit(StructDefinition const& _struct) override;
 	virtual bool visit(MemberAccess const& _memberAccess) override;
 	virtual bool visit(VariableDeclaration const& _variable) override;
 
@@ -94,6 +96,9 @@ private:
 	std::map<VariableDeclaration const*, int> m_localVarUseCount;
 
 	FunctionDefinition const* m_currentFunction = nullptr;
+
+	/// Flag that indicates whether the current scope is within a struct definition.
+	bool m_withinStruct = false;
 };
 
 }

@@ -113,6 +113,17 @@ bool StaticAnalyzer::visit(ExpressionStatement const& _statement)
 	return true;
 }
 
+bool StaticAnalyzer::visit(StructDefinition const&)
+{
+	m_withinStruct = true;
+	return true;
+}
+
+void StaticAnalyzer::endVisit(StructDefinition const&)
+{
+	m_withinStruct = false;
+}
+
 bool StaticAnalyzer::visit(MemberAccess const& _memberAccess)
 {
 	if (m_nonPayablePublic && !m_library)
@@ -125,7 +136,8 @@ bool StaticAnalyzer::visit(MemberAccess const& _memberAccess)
 
 bool StaticAnalyzer::visit(VariableDeclaration const& _variable)
 {
-	checkShadowingBuiltin(_variable);
+	if (!m_withinStruct)
+		checkShadowingBuiltin(_variable);
 	return true;
 }
 
