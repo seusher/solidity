@@ -102,6 +102,9 @@ public:
 	/// Sets the given source code as the only source unit apart from standard sources and parses it.
 	/// @returns false on error.
 	bool parse(std::string const& _sourceCode);
+	/// performs the analyisis steps (imports, scopesetting, syntaxCheck, referenceResolving,
+	///  Typechecking, StaticAnalysis) on the set sources (m_sources)
+	bool analyze(std::map<std::string, SourceUnit const*> _sourceUnitsByName);
 	/// @returns a list of the contract names in the sources.
 	std::vector<std::string> contractNames() const;
 	std::string defaultContractName() const;

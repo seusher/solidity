@@ -153,7 +153,11 @@ bool CompilerStack::parse()
 	if (!Error::containsOnlyWarnings(m_errors))
 		// errors while parsing. should stop before type checking
 		return false;
+	return analyze(sourceUnitsByName);
+}
 
+bool CompilerStack::analyze(map<string, SourceUnit const*> _sourceUnitsByName)
+{
 	resolveImports();
 
 	bool noErrors = true;
@@ -174,7 +178,7 @@ bool CompilerStack::parse()
 			return false;
 
 	for (Source const* source: m_sourceOrder)
-		if (!resolver.performImports(*source->ast, sourceUnitsByName))
+		if (!resolver.performImports(*source->ast, _sourceUnitsByName))
 			return false;
 
 	for (Source const* source: m_sourceOrder)
