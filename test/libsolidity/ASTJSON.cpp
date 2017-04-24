@@ -228,6 +228,27 @@ BOOST_AUTO_TEST_CASE(function_type)
 	BOOST_CHECK_EQUAL(funType["attributes"]["visibility"], "external");
 }
 
+//BOOST_AUTO_TEST_CASE(importAST)
+//{
+//	CompilerStack c;
+//	c.addSource("a",
+//		"contract C { function f(function() external payable returns (uint) x) "
+//		"returns (function() external constant returns (uint)) {} }"
+//	);
+//	//fill m_sources Object of the compilerStack with missing entries
+//	//c.parse();
+//	map<string, SourceUnit const*> sourceUnitsByName;
+//	Source& source = c.
+
+//	ASTNode originalAst = c.ast;
+//	Json::Value originalJson = ASTJsonConverter().toJson(originalAst);
+//	newAst = ASTJsonImporter().fromJson(json)
+//	assert(newAst == originalAst) // I guess there's no equality operator
+//	newJson = ASTJsonConverter().toJson(newAst)
+//	assert(newJson == originalJson) // I guess jsoncpp could have an equality operator
+
+//}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 }

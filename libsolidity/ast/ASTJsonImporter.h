@@ -35,7 +35,67 @@ namespace solidity
  * takes an AST in Json Format and recreates it with AST-Nodes
  */
 
-ASTNode root;
+class ASTJsonImporter: public ASTConstVisitor
+{
+public:
+	/// Create an Importer to import a given abstract syntax tree in Json format to an ASTNode
+	explicit ASTJsonImporter(
+		Json::Value const& _ast
+		//std::map<std::string, unsigned> _sourceIndices = std::map<std::string, unsigned>()
+	);
+
+	//converts a given json node into its respective ASTNode-class
+	ASTNode convertJsonToASTNode(Json::Value const& _ast);
+
+	//instantiate the AST-Nodes with the information from the Json-nodes
+	ASTPointer<ASTNode> createSourceUnit(Json::Value const& _node);
+	ASTPointer<ASTNode> createPragmaDirective (const Json::Value &_node);
+	ASTPointer<ASTNode> createImportDirective const& _node) override;
+	ASTPointer<ASTNode> createContractDefinition const& _node) override;
+	ASTPointer<ASTNode> createInheritanceSpecifier const& _node) override;
+	ASTPointer<ASTNode> createUsingForDirective const& _node) override;
+	ASTPointer<ASTNode> createStructDefinition const& _node) override;
+	ASTPointer<ASTNode> createEnumDefinition const& _node) override;
+	ASTPointer<ASTNode> createEnumValue const& _node) override;
+	ASTPointer<ASTNode> createParameterList const& _node) override;
+	ASTPointer<ASTNode> createFunctionDefinition const& _node) override;
+	ASTPointer<ASTNode> createVariableDeclaration const& _node) override;
+	ASTPointer<ASTNode> createModifierDefinition const& _node) override;
+	ASTPointer<ASTNode> createModifierInvocation const& _node) override;
+	ASTPointer<ASTNode> createEventDefinition const& _node) override;
+	ASTPointer<ASTNode> createTypeName const& _node) override;
+	ASTPointer<ASTNode> createElementaryTypeName const& _node) override;
+	ASTPointer<ASTNode> createUserDefinedTypeASTPointer<ASTNode> _node) override;
+	ASTPointer<ASTNode> createFunctionTypeName const& _node) override;
+	ASTPointer<ASTNode> createMapping const& _node) override;
+	ASTPointer<ASTNode> createArrayTypeName const& _node) override;
+	ASTPointer<ASTNode> createInlineAssembly const& _node) override;
+	ASTPointer<ASTNode> createBlock const& _node) override;
+	ASTPointer<ASTNode> createPlaceholderStatement const& _node) override;
+	ASTPointer<ASTNode> createIfStatement const& _node) override;
+	ASTPointer<ASTNode> createWhileStatement const& _node) override;
+	ASTPointer<ASTNode> createForStatement const& _node) override;
+	ASTPointer<ASTNode> createContinue const& _node) override;
+	ASTPointer<ASTNode> createBreak const& _node) override;
+	ASTPointer<ASTNode> createReturn const& _node) override;
+	ASTPointer<ASTNode> createThrow const& _node) override;
+	ASTPointer<ASTNode> createVariableDeclarationStatement const& _node) override;
+	ASTPointer<ASTNode> createExpressionStatement const& _node) override;
+	ASTPointer<ASTNode> createConditional const& _node) override;
+	ASTPointer<ASTNode> createAssignment const& _node) override;
+	ASTPointer<ASTNode> createTupleExpression const& _node) override;
+	ASTPointer<ASTNode> createUnaryOperation const& _node) override;
+	ASTPointer<ASTNode> createBinaryOperation const& _node) override;
+	ASTPointer<ASTNode> createFunctionCall const& _node) override;
+	ASTPointer<ASTNode> createNewExpression const& _node) override;
+	ASTPointer<ASTNode> createMemberAccess const& _node) override;
+	ASTPointer<ASTNode> createIndexAccess const& _node) override;
+	ASTPointer<ASTNode> createIdentifier const& _node) override;
+	ASTPointer<ASTNode> createElementaryTypeNameExpression const& _node) override;
+	ASTPointer<ASTNode> createLiteral const& _node) override;
+
+private:
+
 
 ASTNode convertJsonToASTNode(Json::Value const& _ast){
     //pseudocode
@@ -60,121 +120,6 @@ ASTNode convertJsonToASTNode(Json::Value const& _ast){
 }
 
 //ASTPointer<ASTNode> createX(Json::Value _node){
-    //create args for the constructor of the node && see how they are filled in parser.cpp
-    //copy from constructor in ast.h
-    //create node
-    //ASTPointer<ASTNode> tmp = make_shared<X>();
-    //tmp->setId(_node["id"])
-    //fill the annotation
-    //tmp->
-    //return tmp;
-    //}
-
-ASTPointer<ASTNode> createSourceUnit(Json::Value const& _node){
-    //create args for constructor
-    vector<ASTPointer<ASTNode>> nodes;
-    for (auto& child : _node["nodes"])
-        nodes.push_back(convertJsonToAST(child));
-    //create node
-    ASTPointer<ASTNode> tmp = make_shared<SourceUnit>(, nodes);
-    tmp->setId(_node["id"]); //TODO write setId() for ASTNode
-    //fill the annotation
-    map<ASTString, vector<Declaration const*>> exportedSymbols;
-    for (auto& tuple : _node["exportedSymbols"])
-        exportedSymbols.insert({tuple.first, tuple.second});
-    tmp->annotation.exportedSymbols = exportedSymbols;
-    tmp->annotation().path = _node["absolutePath"];
-    return tmp;
-}
-
-SourceLocation getSourceLocation(Json::Value _node){
-        string srcString = _node["src"];
-        auto firstColon = std::find(srcString, ":");
-        auto secondColon = std::find(srcString, ":", firstColon+1);
-        return SourceLocation(
-            srcString.substring(0,firstColon),
-            srcString.substring(firstColon, secondColon),
-            srcString.substring(secondColon)
-        );
-}
-
-ASTPointer<ASTNode> createPragmaDirective(Json::Value const& _node) //help
-{
-//      vector<Token::Value> tokens;//here
-        vector<ASTString> literals;
-        for (auto const& lit : _node["literals"])
-            literals.push_back(lit);
-        SourceLocation const& location = getSourceLocation(_node);
-        ASTPointer<ASTNode> tmp = make_shared<PragmaDirective>(tokens, literals);
-
-}
-
-ASTPointer<ASTNode> createImportDirective(Json::Value _node){
-    //create args for the fields of the node
-    ASTPointer<ASTString> path = make_shared<ASTString>(_node["file"]);
-    ASTPointer<ASTString> unitAlias = make_shared<ASTString>(_node["unitAlias"]);
-    std::vector<std::pair<ASTPointer<Identifier>, ASTPointer<ASTString>>> symbolAliases;
-    for (auto& tuple : _node["symbolAliases"])
-    {
-        symbolAliases.push_back(make_pair(
-                make_shared<Identifier>(tuple.first),
-                make_shared<ASTString>(tuple.second)
-        ));
-    }
-    //create node
-    ASTNode tmp = make_shared<ImportDirective>(path, unitAlias,symbolAliases);
-    //fill the annotation
-    tmp.annotation.absolutePath = make_shared<ASTString>(_node["absolutePath"]);
-    //tmp.annotation.sourceUnit = _node(&createSourceUnit(????)) -> how to deal with pointers from the annotation?
-    //tmp.annotation.scope = make_shared<Identifier> ??
-    return tmp;
-    //}
-}
-
-ASTNode createContractDefinition(Json::Value _node){
-    //create args for the constructor of the node
-    SourceLocation const& location = getSourceLocation(_node);
-    ASTPointer<ASTString> const& _documentation = make_shared<ASTString>(""); //postponed
-    ASTPointer<ASTString> name = make_shared<ASTString>(_node["name"]);
-    std::vector<ASTPointer<InheritanceSpecifier>> const& baseContracts;
-    for (auto& base : _node["baseContracts"])
-        baseContracts.append(createInheritanceSpecifier(base));
-    std::vector<ASTPointer<ASTNode>> const& _subNodes;
-    for (auto& subnode : _node["nodes"])
-        subNodes.append(convertJsonToASTNode(subnode));
-    bool _isLibrary = _node["isLibrary"];
-    //create node
-    ASTPointer<ASTNode> tmp = make_shared<ContractDefinition>(
-                name,
-                docString,
-                baseContracts,
-                subNodes,
-                _isLibrary
-     );
-    //fill the annotation
-    tmp->annotation.isFullyImplemented = _node["isFullyImplemented"];
-    //tmp->annotation
-    return *tmp
-    }
-
-ASTPointer<ASTNode> createInheritanceSpecifier(Json::Value _node){
-    //create args for the constructor of the node && see how they are filled in parser.cpp
-    SourceLocation const& location = getSourceLocation(_node);
-    ASTPointer<UserDefinedTypeName> const& baseName = createUserDefinedTypeName(_node["baseName"]);
-    std::vector<ASTPointer<Expression>> arguments;
-    for (auto& arg : _node["arguments"])
-        arguments.push_back(createExpression(arg));
-    //    create node
-    ASTPointer<ASTNode> tmp = make_shared<InheritanceSpecifier>(
-        location,
-        basename,
-        arguments
-    );
-    //fill the annotation
-    return tmp;
-    }
-
-ASTPointer<ASTNode> createUsingForDirective(Json::Value _node){
     //create args for the constructor of the node && see how they are filled in parser.cpp
     //copy from constructor in ast.h
     //create node

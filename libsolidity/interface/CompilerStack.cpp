@@ -128,14 +128,13 @@ bool CompilerStack::parse()
 	vector<string> sourcesToParse;
 	for (auto const& s: m_sources)
 		sourcesToParse.push_back(s.first);
-	map<string, SourceUnit const*> sourceUnitsByName;
 	for (size_t i = 0; i < sourcesToParse.size(); ++i)
 	{
 		string const& path = sourcesToParse[i];
 		Source& source = m_sources[path];
 		source.scanner->reset();
 		source.ast = Parser(m_errors).parse(source.scanner);
-		sourceUnitsByName[path] = source.ast.get();
+		m_sourceUnitsByName[path] = source.ast.get();
 		if (!source.ast)
 			solAssert(!Error::containsOnlyWarnings(m_errors), "Parser returned null but did not report error.");
 		else
@@ -153,10 +152,41 @@ bool CompilerStack::parse()
 	if (!Error::containsOnlyWarnings(m_errors))
 		// errors while parsing. should stop before type checking
 		return false;
-	return analyze(sourceUnitsByName);
+
+//	return analyze();
+
+	//piece of testcode for the import function
+	map<string, shared_ptr<SourceUnit>> tmp;
+	for (auto& src: m_sources)
+	{
+		string name = src.first;
+		tmp[name] = src.second.ast;
+	}
+	importASTs(tmp);
+	return analyze();
+}
+/// will create SourceStructs in m_sources which will hold the ASTNodes as attributes
+/// and the map m_sourceUnitsByName which can be used from outside
+void CompilerStack::importASTs(map<string, shared_ptr<SourceUnit>> _sources)
+{
+	//reset stuff
+	m_sources.clear();
+	//m_errors.clear();
+	m_sourceUnitsByName.clear();
+
+	for (auto& src : _sources)
+	{
+		SourceUnit const* tmp = &*src.second;
+		m_sourceUnitsByName[src.first] = tmp;
+		string const& path = src.first;
+		Source& source = m_sources[path];
+		//source.scanner will stay empty
+		source.ast = src.second;
+	}
+//		in case not all necessary contracts are in the list, import and parse the missing ones
 }
 
-bool CompilerStack::analyze(map<string, SourceUnit const*> _sourceUnitsByName)
+bool CompilerStack::analyze()
 {
 	resolveImports();
 
@@ -178,7 +208,7 @@ bool CompilerStack::analyze(map<string, SourceUnit const*> _sourceUnitsByName)
 			return false;
 
 	for (Source const* source: m_sourceOrder)
-		if (!resolver.performImports(*source->ast, _sourceUnitsByName))
+		if (!resolver.performImports(*source->ast, m_sourceUnitsByName))
 			return false;
 
 	for (Source const* source: m_sourceOrder)

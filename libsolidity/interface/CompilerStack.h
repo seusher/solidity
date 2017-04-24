@@ -102,9 +102,13 @@ public:
 	/// Sets the given source code as the only source unit apart from standard sources and parses it.
 	/// @returns false on error.
 	bool parse(std::string const& _sourceCode);
+
 	/// performs the analyisis steps (imports, scopesetting, syntaxCheck, referenceResolving,
 	///  Typechecking, StaticAnalysis) on the set sources (m_sources)
-	bool analyze(std::map<std::string, SourceUnit const*> _sourceUnitsByName);
+	bool analyze();
+
+	/// loads given ASTs into the member variables for further analysis
+	void importASTs(std::map<std::string, std::shared_ptr<SourceUnit>> _sources);
 	/// @returns a list of the contract names in the sources.
 	std::vector<std::string> contractNames() const;
 	std::string defaultContractName() const;
@@ -270,6 +274,7 @@ private:
 	std::vector<Remapping> m_remappings;
 	bool m_parseSuccessful;
 	std::map<std::string const, Source> m_sources;
+	std::map<std::string, SourceUnit const*> m_sourceUnitsByName;
 	std::shared_ptr<GlobalContext> m_globalContext;
 	std::map<ASTNode const*, std::shared_ptr<DeclarationContainer>> m_scopes;
 	std::vector<Source const*> m_sourceOrder;
