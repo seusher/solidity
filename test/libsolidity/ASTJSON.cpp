@@ -235,18 +235,31 @@ BOOST_AUTO_TEST_CASE(function_type)
 //		"contract C { function f(function() external payable returns (uint) x) "
 //		"returns (function() external constant returns (uint)) {} }"
 //	);
-//	//fill m_sources Object of the compilerStack with missing entries
-//	//c.parse();
-//	map<string, SourceUnit const*> sourceUnitsByName;
-//	Source& source = c.
-
+//	c.parse();
 //	ASTNode originalAst = c.ast;
-//	Json::Value originalJson = ASTJsonConverter().toJson(originalAst);
-//	newAst = ASTJsonImporter().fromJson(json)
-//	assert(newAst == originalAst) // I guess there's no equality operator
-//	newJson = ASTJsonConverter().toJson(newAst)
-//	assert(newJson == originalJson) // I guess jsoncpp could have an equality operator
+//	Json::Value originalJson = ASTJsonConverter(c.ast("a"), c.sourceIndices()).json();
+//￼		//Json::Value originalJson = ASTJsonConverter(true, c.sourceIndices()).toJson(c.ast("a")); //once PR merged
 
+//	//use importer to transform json to ast and back again
+//	//first build the ast without scopes and types
+//	ASTNode newPartialAST = imp.convertJsonToASTNode(originalJson);
+//	//put it into a map that can be given to the parser
+//	map<string, shared_ptr<SourceUnit>> tmp;
+//	tmp["a"] = make_shared<SourceUnit>(newPartialAST);
+//	c.importASTs(tmp);
+//	//use the compiler's parser to annotate, typecheck, etc...
+//	c.analyze();
+//	Json::Value newJson = ASTJsonConverter(c.ast("a"), c.sourceIndices()).json();
+//￼
+
+////	assert(newAst == originalAst) // I guess there's no equality operator -> that's correct
+//	assert(newJson == originalJson)
+
+////	for (auto& src: m_sources)
+////	{
+////		string name = src.first;
+////		tmp[name] = src.second.ast;
+////	}
 //}
 
 BOOST_AUTO_TEST_SUITE_END()
