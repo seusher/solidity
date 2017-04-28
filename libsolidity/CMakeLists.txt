@@ -7,6 +7,9 @@ aux_source_directory(formal SRC_LIST)
 aux_source_directory(interface SRC_LIST)
 aux_source_directory(parsing SRC_LIST)
 aux_source_directory(inlineasm SRC_LIST)
+list(APPEND SRC_LIST
+    ../libjulia/backends/evm15/Evm15Backend.cpp
+)
 
 set(EXECUTABLE solidity)
 
