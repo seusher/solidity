@@ -41,12 +41,13 @@ struct VariableDeclaration;
 struct Instruction;
 struct Identifier;
 struct Assignment;
+struct ForLoop;
 struct FunctionDefinition;
 struct FunctionCall;
 
 struct Scope;
 
-using Statement = boost::variant<Instruction, Literal, Label, Assignment, Identifier, FunctionalAssignment, FunctionCall, FunctionalInstruction, VariableDeclaration, FunctionDefinition, Block>;
+using Statement = boost::variant<Instruction, Literal, Label, Assignment, Identifier, FunctionalAssignment, FunctionCall, FunctionalInstruction, VariableDeclaration, FunctionDefinition, ForLoop, Block>;
 
 struct AsmAnalysisInfo
 {

@@ -46,10 +46,12 @@ bool InlineAssemblyStack::parse(
 )
 {
 	m_parserResult = make_shared<Block>();
-	Parser parser(m_errors);
+	Parser parser(m_errors, true);
 	auto result = parser.parse(_scanner);
 	if (!result)
 		return false;
+
+std::cout << AsmPrinter()(*result) << std::endl;
 
 	*m_parserResult = std::move(*result);
 	AsmAnalysisInfo analysisInfo;
@@ -78,7 +80,7 @@ bool InlineAssemblyStack::parseAndAssemble(
 {
 	ErrorList errors;
 	auto scanner = make_shared<Scanner>(CharStream(_input), "--CODEGEN--");
-	auto parserResult = Parser(errors).parse(scanner);
+	auto parserResult = Parser(errors, true).parse(scanner);
 	if (!errors.empty())
 		return false;
 	solAssert(parserResult, "");

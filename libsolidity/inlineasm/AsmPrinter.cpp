@@ -116,6 +116,17 @@ string AsmPrinter::operator()(assembly::VariableDeclaration const& _variableDecl
 	return "let " + _variableDeclaration.name + " := " + boost::apply_visitor(*this, *_variableDeclaration.value);
 }
 
+string AsmPrinter::operator()(assembly::ForLoop const& _forLoop)
+{
+	string out = "for ";
+	out += boost::apply_visitor(_forLoop.preCondition);
+	out += boost::apply_visitor(_forLoop.expression);
+	out += boost::apply_visitor(_forLoop.postCondition);
+	out += "\n";
+	out += boost::apply_visitor(_forLoop.body);
+	return out;
+}
+
 string AsmPrinter::operator()(assembly::FunctionDefinition const& _functionDefinition)
 {
 	string out = "function " + _functionDefinition.name + "(" + boost::algorithm::join(_functionDefinition.arguments, ", ") + ")";

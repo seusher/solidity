@@ -189,6 +189,12 @@ bool AsmAnalyzer::operator()(assembly::VariableDeclaration const& _varDecl)
 	return success;
 }
 
+bool AsmAnalyzer::operator()(assembly::ForLoop const& _forLoop)
+{
+	// FIXME: implement
+	return true;
+}
+
 bool AsmAnalyzer::operator()(assembly::FunctionDefinition const& _funDef)
 {
 	Scope& bodyScope = scope(&_funDef.body);

@@ -217,6 +217,10 @@ public:
 	{
 		solAssert(false, "Function definition not removed during desugaring phase.");
 	}
+	void operator()(assembly::ForLoop const&)
+	{
+		solAssert(false, "For loop not removed during desugaring phase.");
+	}
 
 private:
 	void generateAssignment(assembly::Identifier const& _variableName, SourceLocation const& _location)

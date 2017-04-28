@@ -45,6 +45,7 @@ struct VariableDeclaration;
 struct Instruction;
 struct Identifier;
 struct Assignment;
+struct ForLoop;
 struct FunctionDefinition;
 struct FunctionCall;
 
@@ -76,6 +77,7 @@ public:
 	bool operator()(assembly::Assignment const&);
 	bool operator()(assembly::FunctionalAssignment const& _functionalAssignment);
 	bool operator()(assembly::VariableDeclaration const& _variableDeclaration);
+	bool operator()(assembly::ForLoop const& _forLoop);
 	bool operator()(assembly::FunctionDefinition const& _functionDefinition);
 	bool operator()(assembly::FunctionCall const& _functionCall);
 	bool operator()(assembly::Block const& _block);
