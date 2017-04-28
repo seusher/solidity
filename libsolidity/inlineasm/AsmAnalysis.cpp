@@ -273,6 +273,25 @@ bool AsmAnalyzer::operator()(assembly::FunctionCall const& _funCall)
 	return success;
 }
 
+bool AsmAnalyzer::operator()(Switch const& _switch)
+{
+	map<string, bool> caseNames;
+	for (auto const& _case: _switch.cases)
+		if (caseNames[_case.name])
+		{
+			m_errors.push_back(make_shared<Error>(
+				Error::Type::DeclarationError,
+				"Duplicate case defined: " + _case.name,
+				_case.location
+				));
+			return false;
+		}
+		else
+			caseNames[_case.name] = true;
+	/// TODO validate scopes and stack height
+	return false;
+}
+
 bool AsmAnalyzer::operator()(Block const& _block)
 {
 	bool success = true;
