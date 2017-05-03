@@ -209,9 +209,24 @@ assembly::Statement Parser::parseElementaryOperation(bool _onlySinglePusher)
 	case Token::TrueLiteral:
 	case Token::FalseLiteral:
 	{
+		LiteralKind kind;
+		switch(m_scanner->currentToken())
+		{
+		case Token::StringLiteral:
+			kind = LiteralKind::String;
+			break;
+		case Token::Number:
+			kind = LiteralKind::Number;
+			break;
+		case Token::TrueLiteral:
+		case Token::FalseLiteral:
+			kind = LiteralKind::Boolean;
+			break;
+		}
+
 		Literal literal{
 			location(),
-			m_scanner->currentToken() == Token::Number,
+			kind,
 			m_scanner->currentLiteral(),
 			""
 		};
