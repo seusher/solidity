@@ -1014,6 +1014,9 @@ void CommandLineInterface::outputAssembly()
 	for (auto const& src: m_sourceCodes)
 	{
 		cout << endl << "======= " << src.first << " =======" << endl;
+		cout << endl << "======= WebAssembly =======" << endl;
+		cout << m_assemblyStacks[src.first].webassembly() << endl;
+		cout << endl << "======= EVM =======" << endl;
 		eth::Assembly assembly = m_assemblyStacks[src.first].assemble();
 		cout << assembly.assemble().toHex() << endl;
 		assembly.stream(cout, "", m_sourceCodes);
