@@ -989,9 +989,9 @@ bool CommandLineInterface::assemble()
 		scanners[src.first] = scanner;
 		if (!m_assemblyStacks[src.first].parse(scanner))
 			successful = false;
-		else
-			//@TODO we should not just throw away the result here
-			m_assemblyStacks[src.first].assemble();
+//		else
+//			//@TODO we should not just throw away the result here
+//			m_assemblyStacks[src.first].assemble();
 	}
 	for (auto const& stack: m_assemblyStacks)
 	{
@@ -1017,9 +1017,9 @@ void CommandLineInterface::outputAssembly()
 		cout << endl << "======= WebAssembly =======" << endl;
 		cout << m_assemblyStacks[src.first].webassembly() << endl;
 		cout << endl << "======= EVM =======" << endl;
-		eth::Assembly assembly = m_assemblyStacks[src.first].assemble();
-		cout << assembly.assemble().toHex() << endl;
-		assembly.stream(cout, "", m_sourceCodes);
+//		eth::Assembly assembly = m_assemblyStacks[src.first].assemble();
+//		cout << assembly.assemble().toHex() << endl;
+//		assembly.stream(cout, "", m_sourceCodes);
 	}
 }
 

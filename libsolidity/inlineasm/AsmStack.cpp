@@ -43,7 +43,7 @@ using namespace dev::solidity::assembly;
 
 bool InlineAssemblyStack::parse(
 	shared_ptr<Scanner> const& _scanner,
-	ExternalIdentifierAccess::Resolver const& _resolver
+	ExternalIdentifierAccess::Resolver const& /* _resolver*/
 )
 {
 	m_parserResult = make_shared<Block>();
@@ -53,8 +53,9 @@ bool InlineAssemblyStack::parse(
 		return false;
 
 	*m_parserResult = std::move(*result);
-	AsmAnalysisInfo analysisInfo;
-	return (AsmAnalyzer(analysisInfo, m_errors, _resolver)).analyze(*m_parserResult);
+	return true;
+//	AsmAnalysisInfo analysisInfo;
+//	return (AsmAnalyzer(analysisInfo, m_errors, _resolver)).analyze(*m_parserResult);
 }
 
 string InlineAssemblyStack::toString()
