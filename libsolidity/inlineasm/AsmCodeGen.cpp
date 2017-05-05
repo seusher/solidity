@@ -202,11 +202,17 @@ public:
 	void operator()(assembly::VariableDeclaration const& _varDecl)
 	{
 		int height = m_state.assembly.deposit();
-		boost::apply_visitor(*this, *_varDecl.value);
-		expectDeposit(1, height);
-		auto& var = boost::get<Scope::Variable>(m_scope.identifiers.at(_varDecl.name));
-		var.stackHeight = height;
-		var.active = true;
+		int expectedItems = _varDecl.names.size();
+		for (auto const& value: _varDecl.values)
+			boost::apply_visitor(*this, value);
+		expectDeposit(expectedItems, height);
+		int index = expectedItems;
+		for (auto const& name: _varDecl.names)
+		{
+			auto& var = boost::get<Scope::Variable>(m_scope.identifiers.at(name));
+			var.stackHeight = --index;
+			var.active = true;
+		}
 	}
 	void operator()(assembly::Block const& _block)
 	{

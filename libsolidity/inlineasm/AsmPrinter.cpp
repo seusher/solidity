@@ -113,7 +113,16 @@ string AsmPrinter::operator()(assembly::FunctionalAssignment const& _functionalA
 
 string AsmPrinter::operator()(assembly::VariableDeclaration const& _variableDeclaration)
 {
-	return "let " + _variableDeclaration.name + " := " + boost::apply_visitor(*this, *_variableDeclaration.value);
+	string out = "let ";
+	out += boost::algorithm::join(_variableDeclaration.names, ", ");
+	out += " := ";
+	out += boost::algorithm::join(
+		_variableDeclaration.values | boost::adaptors::transformed(
+			[this](Statement statement) { return boost::apply_visitor(*this, statement); }
+		),
+		", "
+	);
+	return out;
 }
 
 string AsmPrinter::operator()(assembly::FunctionDefinition const& _functionDefinition)

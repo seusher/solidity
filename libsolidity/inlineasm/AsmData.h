@@ -59,7 +59,7 @@ struct FunctionalAssignment { SourceLocation location; Identifier variableName; 
 struct FunctionalInstruction { SourceLocation location; Instruction instruction; std::vector<Statement> arguments; };
 struct FunctionCall { SourceLocation location; Identifier functionName; std::vector<Statement> arguments; };
 /// Block-scope variable declaration ("let x := mload(20)"), non-hoisted
-struct VariableDeclaration { SourceLocation location; std::string name; std::shared_ptr<Statement> value; };
+struct VariableDeclaration { SourceLocation location; std::vector<std::string> names; std::vector<Statement> values; };
 /// Block that creates a scope (frees declared stack variables)
 struct Block { SourceLocation location; std::vector<Statement> statements; };
 /// Function definition ("function f(a, b) -> (d, e) { ... }")
