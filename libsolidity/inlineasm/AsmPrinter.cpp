@@ -116,12 +116,7 @@ string AsmPrinter::operator()(assembly::VariableDeclaration const& _variableDecl
 	string out = "let ";
 	out += boost::algorithm::join(_variableDeclaration.names, ", ");
 	out += " := ";
-	out += boost::algorithm::join(
-		_variableDeclaration.values | boost::adaptors::transformed(
-			[this](Statement statement) { return boost::apply_visitor(*this, statement); }
-		),
-		", "
-	);
+	out += boost::apply_visitor(*this, *_variableDeclaration.value);
 	return out;
 }
 

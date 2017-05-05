@@ -203,8 +203,7 @@ public:
 	{
 		int height = m_state.assembly.deposit();
 		int expectedItems = _varDecl.names.size();
-		for (auto const& value: _varDecl.values)
-			boost::apply_visitor(*this, value);
+		boost::apply_visitor(*this, *_varDecl.value);
 		expectDeposit(expectedItems, height);
 		int index = expectedItems;
 		for (auto const& name: _varDecl.names)

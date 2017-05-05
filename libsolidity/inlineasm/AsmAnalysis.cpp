@@ -181,32 +181,15 @@ bool AsmAnalyzer::operator()(FunctionalAssignment const& _assignment)
 
 bool AsmAnalyzer::operator()(assembly::VariableDeclaration const& _varDecl)
 {
-	// The number of variable names and values must match. One exception
-	// is a single value, where a tuple assignment is assumed from a function.
-	if (_varDecl.names.size() != _varDecl.values.size())
-	{
-		if (_varDecl.values.size() != 1)
-		{
-			m_errors.push_back(make_shared<Error>(
-				Error::Type::DeclarationError,
-				"Variable declaration name and value count mismatch.",
-				_varDecl.location
-			));
-			return false;
-		}
-	}
-
 	int const expectedItems = _varDecl.names.size();
 	int const stackHeight = m_stackHeight;
-	for (auto const& value: _varDecl.values)
-		if (!boost::apply_visitor(*this, value))
-			return false;
+	bool success = boost::apply_visitor(*this, *_varDecl.value);
 	solAssert(m_stackHeight - stackHeight == expectedItems, "Invalid value size.");
 
 	for (auto const& name: _varDecl.names)
 		boost::get<Scope::Variable>(m_currentScope->identifiers.at(name)).active = true;
 	m_info.stackHeightInfo[&_varDecl] = m_stackHeight;
-	return true;
+	return success;
 }
 
 bool AsmAnalyzer::operator()(assembly::FunctionDefinition const& _funDef)
