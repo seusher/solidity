@@ -160,6 +160,11 @@ BOOST_AUTO_TEST_CASE(function_calls)
 	BOOST_CHECK(successParse("{ function f(a) -> b {} function g(a, b, c) {} function x() { g(1, 2, f(mul(2, 3))) x() } }"));
 }
 
+BOOST_AUTO_TEST_CASE(tuple_assignment)
+{
+	BOOST_CHECK(successParse("{ function f() -> a, b, c {} let x, y, z := f() }"));
+}
+
 BOOST_AUTO_TEST_CASE(label)
 {
 	CHECK_ERROR("{ label: }", ParserError, "Labels are not supported.");

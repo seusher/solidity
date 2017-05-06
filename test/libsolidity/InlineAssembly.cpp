@@ -243,6 +243,12 @@ BOOST_AUTO_TEST_CASE(variable_access_cross_functions)
 	CHECK_PARSE_ERROR("{ let x := 2 function g() { x pop } }", DeclarationError, "Identifier not found.");
 }
 
+BOOST_AUTO_TEST_CASE(invalid_tuple_assignment)
+{
+	/// The push(42) is added here to silence the unbalanced stack error, so that there's only one error reported.
+	CHECK_PARSE_ERROR("{ 42 let x, y := 1 }", DeclarationError, "Variable count mismatch.");
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(Printing)
