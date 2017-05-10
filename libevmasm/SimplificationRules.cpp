@@ -101,7 +101,12 @@ Rules::Rules()
 		{{Instruction::SDIV, {A, B}}, [=]{ return B.d() == 0 ? 0 : s2u(divWorkaround(u2s(A.d()), u2s(B.d()))); }},
 		{{Instruction::MOD, {A, B}}, [=]{ return B.d() == 0 ? 0 : modWorkaround(A.d(), B.d()); }},
 		{{Instruction::SMOD, {A, B}}, [=]{ return B.d() == 0 ? 0 : s2u(modWorkaround(u2s(A.d()), u2s(B.d()))); }},
-		{{Instruction::EXP, {A, B}}, [=]{ return u256(boost::multiprecision::powm(bigint(A.d()), bigint(B.d()), bigint(1) << 256)); }},
+		{{Instruction::EXP, {A, B}}, [=]{
+			// safety case against compile time bomb
+			if (A.d() >= 2 && B.d() >= 256)
+				return ~u256(0);
+			return u256(boost::multiprecision::powm(bigint(A.d()), bigint(B.d()), bigint(1) << 256));
+		}},
 		{{Instruction::NOT, {A}}, [=]{ return ~A.d(); }},
 		{{Instruction::LT, {A, B}}, [=]() -> u256 { return A.d() < B.d() ? 1 : 0; }},
 		{{Instruction::GT, {A, B}}, [=]() -> u256 { return A.d() > B.d() ? 1 : 0; }},
