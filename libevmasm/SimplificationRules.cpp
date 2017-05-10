@@ -126,21 +126,30 @@ Rules::Rules()
 
 		// invariants involving known constants
 		{{Instruction::ADD, {X, 0}}, [=]{ return X; }},
+		{{Instruction::ADD, {0, X}}, [=]{ return X; }},
 		{{Instruction::SUB, {X, 0}}, [=]{ return X; }},
 		{{Instruction::MUL, {X, 0}}, [=]{ return u256(0); }},
+		{{Instruction::MUL, {0, X}}, [=]{ return u256(0); }},
 		{{Instruction::MUL, {X, 1}}, [=]{ return X; }},
+		{{Instruction::MUL, {1, X}}, [=]{ return X; }},
 		{{Instruction::DIV, {X, 0}}, [=]{ return u256(0); }},
 		{{Instruction::DIV, {0, X}}, [=]{ return u256(0); }},
 		{{Instruction::DIV, {X, 1}}, [=]{ return X; }},
+		{{Instruction::SDIV, {X, 0}}, [=]{ return u256(0); }},
+		{{Instruction::SDIV, {0, X}}, [=]{ return u256(0); }},
 		{{Instruction::SDIV, {X, 1}}, [=]{ return X; }},
 		{{Instruction::AND, {X, ~u256(0)}}, [=]{ return X; }},
+		{{Instruction::AND, {~u256(0), X}}, [=]{ return X; }},
 		{{Instruction::AND, {X, 0}}, [=]{ return u256(0); }},
+		{{Instruction::AND, {0, X}}, [=]{ return u256(0); }},
 		{{Instruction::OR, {X, 0}}, [=]{ return X; }},
 		{{Instruction::OR, {X, ~u256(0)}}, [=]{ return ~u256(0); }},
 		{{Instruction::XOR, {X, 0}}, [=]{ return X; }},
+		{{Instruction::XOR, {0, X}}, [=]{ return X; }},
 		{{Instruction::MOD, {X, 0}}, [=]{ return u256(0); }},
 		{{Instruction::MOD, {0, X}}, [=]{ return u256(0); }},
 		{{Instruction::EQ, {X, 0}}, [=]() -> Pattern { return {Instruction::ISZERO, {X}}; } },
+		{{Instruction::EQ, {0, X}}, [=]() -> Pattern { return {Instruction::ISZERO, {X}}; } },
 
 		// operations involving an expression and itself
 		{{Instruction::AND, {X, X}}, [=]{ return X; }},
@@ -216,7 +225,6 @@ Rules::Rules()
 			[=]() -> Pattern { return {op, {{op, {X, Y}}, A}}; }
 		}});
 	}
-
 	// move constants across subtractions
 	addRules(vector<pair<Pattern, function<Pattern()>>>{
 		{
