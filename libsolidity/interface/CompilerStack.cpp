@@ -37,6 +37,7 @@
 #include <libsolidity/analysis/PostTypeChecker.h>
 #include <libsolidity/analysis/SyntaxChecker.h>
 #include <libsolidity/codegen/Compiler.h>
+#include <libsolidity/interface/ABI.h>
 #include <libsolidity/interface/InterfaceHandler.h>
 #include <libsolidity/interface/GasEstimator.h>
 #include <libsolidity/formal/Why3Translator.h>
@@ -446,12 +447,22 @@ map<string, unsigned> CompilerStack::sourceIndices() const
 
 Json::Value const& CompilerStack::contractABI(string const& _contractName) const
 {
-	return metadata(_contractName, DocumentationType::ABIInterface);
+	return contractABI(contract(_contractName));
 }
 
 Json::Value const& CompilerStack::contractABI(Contract const& _contract) const
 {
-	return metadata(_contract, DocumentationType::ABIInterface);
+	if (m_stackState < AnalysisSuccessful)
+		BOOST_THROW_EXCEPTION(CompilerError() << errinfo_comment("Parsing was not successful."));
+
+	solAssert(_contract.contract, "");
+	std::unique_ptr<Json::Value const>* abi = &_contract.abi;
+
+	// caches the result
+	if (!*abi)
+		abi->reset(new Json::Value(ABI::generate(*_contract.contract)));
+
+	return *(*abi);
 }
 
 Json::Value const& CompilerStack::metadata(string const& _contractName, DocumentationType _type) const
@@ -475,9 +486,6 @@ Json::Value const& CompilerStack::metadata(Contract const& _contract, Documentat
 		break;
 	case DocumentationType::NatspecDev:
 		doc = &_contract.devDocumentation;
-		break;
-	case DocumentationType::ABIInterface:
-		doc = &_contract.interface;
 		break;
 	default:
 		BOOST_THROW_EXCEPTION(InternalCompilerError() << errinfo_comment("Illegal documentation type."));
