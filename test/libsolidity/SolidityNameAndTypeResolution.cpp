@@ -1581,6 +1581,26 @@ BOOST_AUTO_TEST_CASE(invalid_parameter_names_in_named_args)
 	CHECK_ERROR(sourceCode, TypeError, "");
 }
 
+BOOST_AUTO_TEST_CASE(overload_function_call_with_names_in_named_args)
+{
+    char const* sourceCode = R"(
+    contract test {
+        function fun(uint a, uint b) returns (uint r) {
+            r = a + b;
+        }
+        
+        function fun(uint c) returns (uint d) {
+            d = c;
+        }
+        
+        function funfinal() returns (uint e) {
+            e = fun({c: 1});
+        }
+    }
+    )";
+    CHECK_SUCCESS(sourceCode);
+}
+    
 BOOST_AUTO_TEST_CASE(empty_name_input_parameter)
 {
 	char const* text = R"(

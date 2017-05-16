@@ -1219,7 +1219,7 @@ bool TypeChecker::visit(FunctionCall const& _functionCall)
 
 	// We need to check arguments' type first as they will be needed for overload resolution.
 	shared_ptr<TypePointers> argumentTypes;
-	if (isPositionalCall)
+	//if (isPositionalCall)
 		argumentTypes = make_shared<TypePointers>();
 	for (ASTPointer<Expression const> const& argument: arguments)
 	{
@@ -1227,10 +1227,10 @@ bool TypeChecker::visit(FunctionCall const& _functionCall)
 		if (!argument->annotation().isPure)
 			isPure = false;
 		// only store them for positional calls
-		if (isPositionalCall)
+		//if (isPositionalCall)
 			argumentTypes->push_back(type(*argument));
 	}
-	if (isPositionalCall)
+	//if (isPositionalCall)
 		_functionCall.expression().annotation().argumentTypes = move(argumentTypes);
 
 	_functionCall.expression().accept(*this);
